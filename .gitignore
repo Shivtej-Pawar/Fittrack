@@ -1,0 +1,75 @@
+# ==============================
+# FitTrack - Git Ignore
+# ==============================
+
+# ---------- Frontend ----------
+node_modules/
+dist/
+.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ---------- Backend ----------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# FastAPI / Uvicorn
+*.log
+
+# ---------- Database ----------
+*.db
+*.sqlite
+*.sqlite3
+
+# ---------- IDE / Editors ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---------- Testing / Coverage ----------
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ---------- Temporary files ----------
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# ---------- Build / Generated files ----------
+build/
+coverage/
+
+# ---------- Secrets ----------
+*.pem
+*.key
+secrets/
