@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Phase 17.1 bug-fix pass — fallback value for `--navbar-height`, the
+ * fixed Navbar's real rendered height. The authoritative value is
+ * measured at runtime from the actual DOM box in Navbar.jsx (via
+ * ResizeObserver, since the header has no explicit height of its own —
+ * `h-16` lives on the inner <nav>, and the <header> is sized by that
+ * content plus its own 1px `border-b`, i.e. ~65px, not a flat 4rem) and
+ * overwrites this on mount. This literal is only what applies for the
+ * one frame before that effect runs (or in the unlikely case
+ * ResizeObserver is unavailable) — it intentionally does not need to be
+ * pixel-exact. Full-viewport `fixed inset-0` overlays rendered inside
+ * <main> (ShareProgressModal.jsx in particular) read this variable to
+ * size/center themselves against the space actually left over *below*
+ * the sticky Navbar, instead of the raw 100vh, so their top edge can
+ * never land underneath it.
+ */
+:root {
+  --navbar-height: 4rem;
+}
+
+/*
+ * Shared keyframes/animation classes used across pages (Phase 8/9).
+ * Centralized here (rather than each page carrying its own inline
+ * <style> block) now that Modal.jsx and WorkoutCard.jsx are shared
+ * across LogWorkout.jsx and Workouts.jsx. All respect
+ * prefers-reduced-motion, per this phase's animation requirements.
+ */
+@keyframes workout-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/*
+ * Root-cause fix (Phase 17 bug-fix pass) — opacity-only fade-in, safe to
+ * put on any element that must remain a valid `position: fixed`
+ * containing block for its descendants (i.e. *never* apply a `transform`
+ * to it, not even a settled `translateY(0)`).
+ *
+ * The bug this closes: `.workout-fade-in` above sets
+ * `transform: translateY(0)` in its `to` keyframe, and — combined with
+ * `animation-fill-mode: both` — that computed transform value persists
+ * on the element *forever* after the animation finishes. Per the CSS
+ * Transforms spec, ANY element with a transform value other than the
+ * literal keyword `none` establishes a new containing block for its
+ * `position: fixed` descendants — `translateY(0)` still counts, even
+ * though it's visually a no-op. `components/Layout.jsx`'s `<main>` used
+ * `.workout-fade-in` and wraps every page's content, which is where
+ * every `fixed inset-0` overlay in the app (Modal.jsx, WorkoutDrawer.jsx,
+ * ShareProgressModal.jsx, WorkoutHeatmap.jsx's day popover) actually
+ * lives in the React tree. With `<main>` silently acting as their
+ * containing block instead of the real viewport, `inset-0` sized/
+ * positioned those overlays against `<main>`'s own (page-content-height)
+ * box instead of the visible viewport — so on any page taller than one
+ * screen, a "centered" modal could render far below the visible area
+ * (needing a scroll to reach), and a tall drawer could overflow in ways
+ * that made only its first couple of rendered pixels actually visible.
+ * Same fade-in *feel* (still 0.35s ease-out), just without the
+ * lingering `transform` — see `<main>` in Layout.jsx for where this is
+ * used instead of `.workout-fade-in`.
+ */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.page-fade-in {
+  animation: page-fade-in 0.35s ease-out both;
+}
+@keyframes modal-backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes modal-panel-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@keyframes toast-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.workout-fade-in {
+  animation: workout-fade-in 0.35s ease-out both;
+}
+.modal-backdrop {
+  animation: modal-backdrop-fade-in 0.15s ease-out both;
+}
+.modal-panel {
+  animation: modal-panel-scale-in 0.18s ease-out both;
+}
+.toast-fade-in {
+  animation: toast-fade-in 0.2s ease-out both;
+}
+
+/*
+ * Phase 15 additions: the Floating Action Button's entrance, the
+ * Workout Detail Drawer's slide-in (desktop: from the right; mobile:
+ * from the bottom, as its own bottom-sheet keyframe), and a small fade
+ * for the premium tooltips (Heatmap + Recharts). Same
+ * prefers-reduced-motion handling as everything above — added to that
+ * same media query below rather than a second one.
+ */
+@keyframes fab-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes drawer-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes drawer-slide-in-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes trend-arrow-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fab-pop-in {
+  animation: fab-pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.drawer-slide-in-right {
+  animation: drawer-slide-in-right 0.28s ease-out both;
+}
+.drawer-slide-in-up {
+  animation: drawer-slide-in-up 0.28s ease-out both;
+}
+/* WorkoutDrawer.jsx applies this single class to its panel; which
+   keyframe actually plays is decided by a plain CSS media query rather
+   than JS viewport-width detection, matching the same `sm:` (640px)
+   breakpoint Tailwind's own `sm:` variant uses elsewhere in the app —
+   mobile gets the bottom-sheet slide-up, desktop gets the slide-in from
+   the right, with zero window-resize listener needed. */
+.drawer-panel {
+  animation: drawer-slide-in-up 0.28s ease-out both;
+}
+@media (min-width: 640px) {
+  .drawer-panel {
+    animation: drawer-slide-in-right 0.28s ease-out both;
+  }
+}
+.tooltip-fade-in {
+  animation: tooltip-fade-in 0.12s ease-out both;
+}
+.trend-arrow-in {
+  animation: trend-arrow-in 0.4s ease-out both;
+}
+/* Shared by Landing.jsx's hero and (Phase 15) Dashboard.jsx's redesigned
+   hero — previously defined only in Landing.jsx's own local <style>
+   block, which meant it silently did nothing anywhere else in the app
+   (that <style> tag only exists in the DOM while Landing.jsx itself is
+   mounted). Centralized here so both pages share one definition instead
+   of Dashboard needing its own duplicate copy. */
+.hero-fade-in {
+  animation: hero-fade-in 0.6s ease-out both;
+}
+.hero-fade-in-delayed {
+  animation: hero-fade-in 0.6s ease-out 0.15s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workout-fade-in,
+  .page-fade-in,
+  .modal-backdrop,
+  .modal-panel,
+  .toast-fade-in,
+  .fab-pop-in,
+  .drawer-slide-in-right,
+  .drawer-slide-in-up,
+  .drawer-panel,
+  .tooltip-fade-in,
+  .trend-arrow-in,
+  .hero-fade-in,
+  .hero-fade-in-delayed {
+    animation: none !important;
+  }
+}
+

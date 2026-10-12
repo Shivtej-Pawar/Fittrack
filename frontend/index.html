@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icons/favicon-64.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Phase 13 / Feature 5 (PWA) — theme_color also lives in the
+         generated manifest (vite.config.js), but browsers read this tag
+         for the address-bar/status-bar color before the manifest is
+         fetched. -->
+    <meta name="theme-color" content="#2563eb" />
+    <title>FitTrack</title>
+    <!--
+      Applies the stored theme (Phase 9 / Feature 4) before React mounts
+      and before first paint, so switching themes and reloading the page
+      doesn't flash the *other* theme for a frame first. Mirrors
+      ThemeContext.jsx's own default-to-dark fallback exactly (FitTrack
+      was originally dark-only, so an unset preference stays dark).
+    -->
+    <script>
+      (function () {
+        try {
+          var stored = window.localStorage.getItem("fittrack_theme");
+          if (stored !== "light") {
+            document.documentElement.classList.add("dark");
+          }
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
