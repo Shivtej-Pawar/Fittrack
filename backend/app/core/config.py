@@ -13,11 +13,11 @@ class Settings(BaseSettings):
     API_V1_PREFIX: str = "/api/v1"
 
     # Allowed origins for CORS (frontend dev server)
-CORS_ORIGINS: list[str] = [
+    CORS_ORIGINS: list[str] = [
     "http://localhost:5173",
     "https://fittrack-ten-ashen.vercel.app",
     "https://fittrack-tricep.vercel.app",
-]
+] 
 
     # Database connection string — must be a PostgreSQL/Neon URL, e.g.
     # postgresql+psycopg2://user:password@host/dbname?sslmode=require
