@@ -1,0 +1,6 @@
+# Test-only dependencies — not needed to run the app itself, only to run
+# backend/tests/. Kept separate from requirements.txt so a production
+# install doesn't pull in tooling it'll never use.
+-r requirements.txt
+pytest==8.3.4
+httpx==0.28.1

@@ -4,10 +4,11 @@ from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, func, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database.database import Base
+from app.database.database import Base
 
 
 class Workout(Base):
+    """Represents a single logged workout entry belonging to a user."""
 
     __tablename__ = "workouts"
 
@@ -24,7 +25,6 @@ class Workout(Base):
     exercise_name: Mapped[str] = mapped_column(String(100), nullable=False)
 
     variation: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
     set_entries: Mapped[list[dict]] = mapped_column(
         JSON().with_variant(JSONB, "postgresql"),
         nullable=False,
