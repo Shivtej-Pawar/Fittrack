@@ -15,7 +15,10 @@ class Settings(BaseSettings):
     # Allowed origins for CORS (frontend dev server)
     CORS_ORIGINS: list[str] = [
     "http://localhost:5173",
-    "https://fittrack-tricep.vercel.app",  # replace with your real Vercel domain
+    "https://fittrack-tricep.vercel.app",
+    "https://fittrack-ten-ashen.vercel.app",
+
+        # replace with your real Vercel domain
 ]
 
     # Database connection string — must be a PostgreSQL/Neon URL, e.g.
